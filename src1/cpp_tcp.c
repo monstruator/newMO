@@ -68,7 +68,7 @@ pid_t far handler_time()
 //------------------ SIGNAL --------------------------------
 void SigHandler ( int signal_number )	
 {
-	if (p->verbose>1) printf("\n%s.    seanse: %d error",Host,Seans);
+	if (p->verbose>2) printf("\n%s.    seanse: %d error",Host,Seans);
 	T_ALRM=1; 
 }
 
@@ -123,9 +123,7 @@ main(int argc, char *argv[])
 
 						switch(p->work_com[c_step].s[i].n_com)
 						{
-							case 1: if (p->work_com[c_step].s[i].status==0) //na4alo vipolneni9
-                                    {   
-										p->work_com[c_step].s[i].status=1;
+							case 1: 	p->work_com[c_step].s[i].status=1;
                                         if(p->verbose) printf("SVCH work (TC=3)\n");
 										memset((char *)&f11, 0, sizeof(struct to_cpp11));
 										f11.zag.reserv=sizeof(struct form11);
@@ -138,25 +136,40 @@ main(int argc, char *argv[])
 										f11.data.ustKU0=1; // 1 - ustanovit' , 0 - ne ustanavlivat'
 										bbb = (unsigned short *)&f11;	
 										col = sizeof(f11);
-										if(p->verbose>1) {printf("<-Send ");for(i1=0;i1<col;i1++) printf("%x ",bbb[i1]);printf("\n");}
-										//printf("r=%d\n",col);
+										if(p->verbose>2) {printf("<-Send ");for(i1=0;i1<col;i1++) printf("%x ",bbb[i1]);printf("\n");}
 										col=tcp_send_read(col);
-										if (col) 
+										if (col==0x14) //esli otet=sosto9nie 
 										{
-											//if ()
-											p->work_com[c_step].s[i].status=2;
+											//if (f12->data.SS0_all) 
+											p->work_com[c_step].s[i].status=2; // ispravnost'
 										}
 										else p->work_com[c_step].s[i].status=3;
                                         printf("col=%d status=%d\n",col/2,p->work_com[c_step].s[i].status);
-									}
-                                    break;
-							case 2: if (p->work_com[c_step].s[i].status==0) //na4alo vipolneni9
-                                    {   
-                                        if(p->verbose) printf("Send to 1 chan\n");
-										//tcp_send_read();
-                                        p->work_com[c_step].s[i].status=2;
-                                    }
-                                    break;
+									    break;
+							case 2: 	p->work_com[c_step].s[i].status=1;
+                                        if(p->verbose) printf("SVCH PRD-PRM CHAN (TC=3)\n");
+										memset((char *)&f11, 0, sizeof(struct to_cpp11));
+										f11.zag.reserv=sizeof(struct form11);
+										f11.zag.II=1;
+										f11.zag.TS=3;
+										f11.zag.PS=1;
+										//---------------------------------
+										f11.data.nf=11;
+										f11.data.KU5=p->inbufMN3.a_params[0]; //// RT PRD 1 - 6
+										f11.data.ustKU5=1; // 1 - ustanovit' , 0 - ne ustanavlivat'
+										f11.data.KU4=p->inbufMN3.a_params[0]+6; //// RT PRD 1 - 6
+										f11.data.ustKU4=1; // 1 - ustanovit' , 0 - ne ustanavlivat'
+										bbb = (unsigned short *)&f11;	
+										col = sizeof(f11);
+										if(p->verbose>2) {printf("<-Send ");for(i1=0;i1<col;i1++) printf("%x ",bbb[i1]);printf("\n");}
+										col=tcp_send_read(col);
+										if (col==0x14) //esli otet=sosto9nie 
+										{
+											if(p->verbose>1) printf("SS4=%d SS5=%d \n",f12->data.SS4,f12->data.SS5);
+											p->work_com[c_step].s[i].status=2; // ispravnost'
+										}
+										else p->work_com[c_step].s[i].status=3;
+                                        break;
 							
                             case 3: if (p->work_com[c_step].s[i].status==0) //na4alo vipolneni9
                                     {   
@@ -182,7 +195,10 @@ main(int argc, char *argv[])
                                         p->work_com[c_step].s[i].status=2;
                                     }
                                     break;
-							default: printf("Bad minicom for 1 chan : %d",p->work_com[c_step].s[i].n_com);					
+							default: 
+									printf("Bad minicom for 1 chan : %d",p->work_com[c_step].s[i].n_com);					
+									p->work_com[c_step].s[i].status=3;
+									
 						}//switch (n_com)
 						//-------------------------------------------------------
                         //esli previweno vrem9 ozhidani9
@@ -271,7 +287,7 @@ short tcp_send_read(int col)
 				if(p->verbose>1) {printf("->Read %d word : ",n/2); for (j=0;j<n/2;j++ ) printf(" %x",bbb[j]); printf("\n");}
 				//mes_fcpp = (struct zag_CPP *)bbb;
 				f12 = (struct from_cpp12 *)bbb;
-				if(p->verbose>1) printf("KSS=%d II=%d TS=%d\n", f12->zag.KSS,f12->zag.II,f12->zag.TS);
+				if(p->verbose>1) printf("KSS=%d II=%d TS=%d      ", f12->zag.KSS,f12->zag.II,f12->zag.TS);
 				switch(f12->zag.TS)
 				{
 					case 0x10 : if(p->verbose) printf("Check CPP link OK(TC=0x10)\n");
@@ -283,19 +299,29 @@ short tcp_send_read(int col)
 					case 0x13 : if(p->verbose) printf("No data from AK(TC=0x13)\n");
 								break;
 					case 0x14 : if(p->verbose) printf("CPP parameters (TC=0x14)\n");
+								if (f12->data.nf==12)
+								{
+									//if(p->verbose>1) printf("SS0_prd=%d SS0_prm=%d SS0_cpp=%d SS0_all=%d \n",f12->data.SS0_prd,f12->data.SS0_prm,f12->data.SS0_cpp,f12->data.SS0_all);
+									
+									for(j=0;j<9;j++) p->toMN3.sost_kasrt[j]=f12->i.data_int[j];
+									return 0x14;
+								}
+								//printf("nf=%d\n",f12->data.nf);
+								
 								break;
 					default :   if(p->verbose) printf("Error TS (TC=%d)\n",f12->zag.TS);
 								break;
 			
 				}
 				
-				//printf("\n");
-				printf("nf=%d\n",f12->data.nf);
+				
+				printf("\n");
+				//printf("nf=%d\n",f12->data.nf);
 				return f12->zag.TS;
 			}
 			else 
 			{
-								return 0; //owibka soedineni9
+				return 0; //owibka soedineni9
 			}//owibka priema
 			T_ALRM=0;
 	} //send-recieve

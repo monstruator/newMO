@@ -150,7 +150,16 @@ struct form14
 struct from_cpp12
 {
 	struct zag_CPP zag;
-	struct form12 data;
+	union
+	{
+		struct form12 data;
+		struct 
+		{
+			short nf;
+			unsigned int data_int[9];
+			short KS;
+		} i;
+	};
 };
 
 struct to_cpp11

@@ -22,7 +22,7 @@
   
 main()
 {//--- KOHCTAHTbl npu6opa 1.0 ---//
-		int sock, length, i , count_mes=0, i1 , i_p=0 , i2=0;
+		int sock, length, i , count_mes=0, i1 , i_p=0 , i2=0 , j;
 		static Udp_Client_t Uc42;
 		short c_step=0,TC10=0;	
 		char bufi[1024];
@@ -73,7 +73,7 @@ main()
 
 					memcpy(pack_buf,&p->toMN3,24); ///!!!!!!
 					//printf("cr_com->MO3 = %d \n",	p->toMN3.cr_com);
-				
+					//for(j=0;j<9;j++) printf("%08x ",p->toMN3.sost_kasrt[j]);  printf("\n");
 	     			i = Udp_Client_Send(&Uc42,pack_buf,sizeof(packusoi));
 	
 					//printf("Send i = %d\n ",i);
@@ -92,9 +92,31 @@ main()
                 p->toMN3.link = 0;
 					
 
-				printf("\nNew command : %d ,    time=%d\n",p->inbufMN3.num_com,p->sys_timer);
+				printf("\nNew command : %d , param: %d %d %d    time=%d\n",p->inbufMN3.num_com,p->inbufMN3.a_params[0],p->inbufMN3.a_params[1],p->inbufMN3.a_params[2],p->sys_timer);
 				switch (p->inbufMN3.num_com)
 				{
+					case 5 : 
+						if ((p->inbufMN3.a_params[0]>0)&&(p->inbufMN3.a_params[0]<7))
+						{
+							n_s=1;  //nomer waga
+							n_mc=0; //s4et4ik mini komamdi
+							p->work_com[n_s].s[n_mc].n_chan=2;
+							p->work_com[n_s].s[n_mc].n_com=2;
+							p->work_com[n_s].s[n_mc].status=0;		
+							n_mc++; //kol-vo mini komand + 1
+							//---------------------------------------------
+							p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s  
+							p->kol_step=n_s; //obwee kol-vo wagov na dannom wage
+							p->work_com[n_s].t_start=p->sys_timer;                        
+							p->work_com[n_s].t_stop =p->sys_timer+100;   
+						}
+						else 
+						{
+							printf("Bad param0 : %d\n",p->inbufMN3.a_params[0]);
+							p->toMN3.kzv=1;
+							p->toMN3.cr_com++;
+						}
+ 						break;
 					case 77 :    
 						n_s=1;  //nomer waga
 						n_mc=0; //s4et4ik mini komamdi
