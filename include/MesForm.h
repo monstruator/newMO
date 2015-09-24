@@ -56,7 +56,7 @@ struct form13
 	char ustKU2; // 1 - ustanovit' , 0 - ne ustanavlivat'
 	char KU3; //  1 - TKI, 0 - RLI 
 	char ustKU3; // 1 - ustanovit' , 0 - ne ustanavlivat'
-	char KU4; //  1 - FM1, 0 - FM2 
+	char KU4; //  0 - FM1, 1 - FM2 
 	char ustKU4; // 1 - ustanovit' , 0 - ne ustanavlivat'
 	unsigned char KU5; // RT PRD 1 - 255
 	char ustKU5; // 1 - ustanovit' , 0 - ne ustanavlivat'
@@ -97,19 +97,19 @@ struct form12
 	char SS6; // nomer FK 1-10
 	char SS9; // PZ IB v PRD : 0 - net zarguzki, 1 - IB zagruzen, 2 - IS peredano 
 	char SS8; // priznak priema IS (TKI) 0 - net priema, 1 - priem IS
-	int SS10; // dlina preambuli : 1 - 255
-	int SS11; // porog ss : 1 - 15
-	int SS12; // porog mi : 1 - 15
-	int SS13; // s4et4ik pss : 1 - 20	
-	int SS14; // s4et4ik pmi : 1 - 20
-	int SS15; // s4et4ik svch : 1 - 20
-	int SS16; // s4et4ik sboinih: 1 - 20
-	int SS17; // s4et4ik propuwennih : 1 - 20
-	int SS18; // s4et4ik chksum  : 1 - 20
-	int SS19; // srednii pik AFK  : 0 - 360
-	int SS20; // max pik AFK  : 0 - 360
-	int SS21; // oslablenie prm  : 0 - 63
-	int KSS; //kontrol'na9 summa
+	short SS10; // dlina preambuli : 1 - 255
+	short SS11; // porog ss : 1 - 15
+	short SS12; // porog mi : 1 - 15
+	short SS13; // s4et4ik pss : 1 - 20	
+	short SS14; // s4et4ik pmi : 1 - 20
+	short SS15; // s4et4ik svch : 1 - 20
+	short SS16; // s4et4ik sboinih: 1 - 20
+	short SS17; // s4et4ik propuwennih : 1 - 20
+	short SS18; // s4et4ik chksum  : 1 - 20
+	short SS19; // srednii pik AFK  : 0 - 360
+	short SS20; // max pik AFK  : 0 - 360
+	short SS21; // oslablenie prm  : 0 - 63
+	short KSS; //kontrol'na9 summa
 };
 
 struct form14 
@@ -132,19 +132,19 @@ struct form14
 	char SS6; // nomer FK 1-10
 	char SS9; // PZ IB v PRD : 0 - net zarguzki, 1 - IB zagruzen, 2 - IS peredano 
 	char SS8; // priznak priema IS (TKI) 0 - net priema, 1 - priem IS
-	int SS10; // dlina preambuli : 1 - 255
-	int SS11; // porog ss : 1 - 15
-	int SS12; // porog mi : 1 - 15
-	int SS13; // s4et4ik pss : 1 - 20	
-	int SS14; // s4et4ik pmi : 1 - 20
-	int SS15; // s4et4ik svch : 1 - 20
-	int SS16; // s4et4ik sboinih: 1 - 20
-	int SS17; // s4et4ik propuwennih : 1 - 20
-	int SS18; // s4et4ik chksum  : 1 - 20
-	int SS19; // srednii pik AFK  : 0 - 360
-	int SS20; // max pik AFK  : 0 - 360
-	int SS21; // oslablenie prm  : 0 - 63
-	int KSS; //kontrol'na9 summa
+	short SS10; // dlina preambuli : 1 - 255
+	short SS11; // porog ss : 1 - 15
+	short SS12; // porog mi : 1 - 15
+	short SS13; // s4et4ik pss : 1 - 20	
+	short SS14; // s4et4ik pmi : 1 - 20
+	short SS15; // s4et4ik svch : 1 - 20
+	short SS16; // s4et4ik sboinih: 1 - 20
+	short SS17; // s4et4ik propuwennih : 1 - 20
+	short SS18; // s4et4ik chksum  : 1 - 20
+	short SS19; // srednii pik AFK  : 0 - 360
+	short SS20; // max pik AFK  : 0 - 360
+	short SS21; // oslablenie prm  : 0 - 63
+	short KSS; //kontrol'na9 summa
 };
 
 struct from_cpp12
