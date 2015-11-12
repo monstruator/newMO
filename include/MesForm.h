@@ -56,7 +56,7 @@ struct form13
 	char ustKU2; // 1 - ustanovit' , 0 - ne ustanavlivat'
 	char KU3; //  1 - TKI, 0 - RLI 
 	char ustKU3; // 1 - ustanovit' , 0 - ne ustanavlivat'
-	char KU4; //  0 - FM1, 1 - FM2 
+	char KU4; //  1 - FM1, 0 - FM2 
 	char ustKU4; // 1 - ustanovit' , 0 - ne ustanavlivat'
 	unsigned char KU5; // RT PRD 1 - 255
 	char ustKU5; // 1 - ustanovit' , 0 - ne ustanavlivat'

@@ -1,0 +1,9 @@
+cc -T3 -o bu1 bu1.c
+cc -T3 -o timer timer.c
+cc -T3 -o mn3 mn3.c
+cc -T3 -o ncu ncu.c
+cc -T3 -o cpp1 cpp1.c
+
+rm *.o
+
+ 
