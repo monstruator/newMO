@@ -86,7 +86,7 @@ int far mpcint2 ()   // ¤£-ò¦ð¯ Rö ÿöR¢òð ? ? . INT2 R¢ INT ??
 main(int argc, char *argv[])
 {
 	
-	int n,i,j,col,i1;
+	int n,i,j,col,i1,read_w=0;
 	unsigned int command=0;
 	unsigned char rele=0;// sosto9nie rele
     short c_step=0,T0=0;	
@@ -144,10 +144,11 @@ if (p->verbose) printf("START MO3A<->R999\n\n");
 				}
 	    		
 		printf("Number VER PO %x\n",pc_rm(3002));
-	for(j=0,i=0;j<512;j++,i=i+2)	si_tb (1,j,0xc000+i); //?ÿ¡ô. ??1 ý<¯ ??=0¥0 ÷ ?=¡000h
-		pc_fsi (0xa,0x1,0x1,0,0,0,0,0,0,0,0,0,0,0,0,0); //a 
-		pc_fso (0xa,0x1,0x1,0,0,0,0,0); //a
-		pc_si_gp (1);	//??1 na priem 
+	//for(j=0,i=0;j<512;j++,i=i+2)	si_tb (1,j,0xc000+i); //?ÿ¡ô. ??1 ý<¯ ??=0¥0 ÷ ?=¡000h
+		pc_fsi (0xa,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0); //a 
+		pc_fso (0xa,0,0,0,0,0,0,0); //a
+		//pc_si_gp (1);	//??1 na priem //!
+		pc_si_ap (1,0,3,1);	//??1 na priem		
 	//--------------------------------------------nastroika rele----------------------------
 	//create_shmem();
 	delay(500);
@@ -167,18 +168,15 @@ if (p->verbose) printf("START MO3A<->R999\n\n");
 			{
 				c_step=p->cur_step;
 				for (i=0;i<p->work_com[c_step].num_mini_com;i++) //prosmotrim vse minicomandi na wage 
-					if((p->work_com[c_step].s[i].n_chan==N_CHAN)&&(p->work_com[c_step].s[i].status==0)) //na tekuwem wage (i - minikomanda) est' komanda dl9 nas
+					if((p->work_com[c_step].s[i].n_chan==N_CHAN)&&(p->work_com[c_step].s[i].status!=2)) //na tekuwem wage (i - minikomanda) est' komanda dl9 nas
 					{
-						printf("\nSTEP=%d    minicom for RELE : %d      status=%d time %d \n", p->cur_step,  p->work_com[c_step].s[i].n_com, p->work_com[c_step].s[i].status, p->sys_timer);
+						if((p->verbose>1)&&(p->work_com[c_step].s[i].status==0)) printf("\nSTEP=%d    minicom for R999 : %d      status=%d time %d \n", p->cur_step,  p->work_com[c_step].s[i].n_com, p->work_com[c_step].s[i].status, p->sys_timer);
 
 						switch(p->work_com[c_step].s[i].n_com)
 						{
 							case 1: p->work_com[c_step].s[i].status=1;
-									if(p->verbose) printf("		R999 N_CHAN=%d \n",p->inbufMN3.a_params[0]);
-									
-									com999.cm.chan01=p->inbufMN3.a_params[0]%10;
-									com999.cm.chan10=p->inbufMN3.a_params[0]/10;
-									send_com();
+									read_w=pc_rml(0x41f0);
+									if(p->verbose) printf("		R999 READ=%x %x\n",0x41f0,read_w);
 									p->work_com[c_step].s[i].status=2;
 									break;
 							case 2: p->work_com[c_step].s[i].status=1;
@@ -186,31 +184,59 @@ if (p->verbose) printf("START MO3A<->R999\n\n");
 									send_com();
 									p->work_com[c_step].s[i].status=2;
 									break;
-							case 10: p->work_com[c_step].s[i].status=1;
-									if(p->verbose) printf("		R999 ZU=%d \n",p->inbufMN3.a_params[0]);
-									com999.cm.com=0; //0x22
-									com999.cm.chan01=p->inbufMN3.a_params[0]%10;
-									com999.cm.chan10=p->inbufMN3.a_params[0]/10;
-									com999.cm.power=p->inbufMN3.a_params[2];
-									com999.cm.speed=p->inbufMN3.a_params[1];
+							case 4:	p->work_com[c_step].s[i].status=1; 
+									if(p->verbose) printf("		R999 BASE SETUP \n");
+									com999.cm.com=0; 
+									com999.cm.chan01=1;
+									com999.cm.chan10=com999.cm.power=com999.cm.speed=0;
 									send_com();
 									p->work_com[c_step].s[i].status=2;
 									break;
-							case 11: p->work_com[c_step].s[i].status=1;
-									com999.cm.com=0x22; //0x22
-									com999.cm.chan01=p->inbufMN3.a_params[0]%10;
-									com999.cm.chan10=p->inbufMN3.a_params[0]/10;
-									com999.cm.power=p->inbufMN3.a_params[2];
-									com999.cm.speed=p->inbufMN3.a_params[1];
-									send_com();
-									p->work_com[c_step].s[i].status=2;
+							case 10: if (p->work_com[c_step].s[i].status==0) 
+									{
+										p->work_com[c_step].s[i].status=1; 
+										if(p->verbose) printf("		R999 ZU \n");
+										com999.cm.com=0; 
+										com999.cm.chan01=p->inbufMN3.a_params[0]%10;
+										com999.cm.chan10=p->inbufMN3.a_params[0]/10;
+										com999.cm.power=p->inbufMN3.a_params[2];
+										com999.cm.speed=p->inbufMN3.a_params[1];
+										send_com();
+										p->work_com[c_step].t_start = p->sys_timer;
+									}
+									
 									break;
-							case 80: p->work_com[c_step].s[i].status=1;
-									pc_so_uf (1,0,1,0); //1 raz 1 slovo
-									pc_wml(0x8000,0x3a0201f8);		
-									pc_wm (0x2004,0x00); //KCP 
-									pc_wm (0x2001,0x0888); //ô£¡ò ???-?ÿöR¢« (<®öR? c<R÷R,
-									p->work_com[c_step].s[i].status=2;
+							case 11: if (p->work_com[c_step].s[i].status==0) 
+									{
+										p->work_com[c_step].s[i].status=1; 
+										if(p->verbose) printf("		R999 PPR4 \n");
+										com999.cm.com=0x22; //0x22
+										com999.cm.chan01=p->inbufMN3.a_params[0]%10;
+										com999.cm.chan10=p->inbufMN3.a_params[0]/10;
+										com999.cm.power=p->inbufMN3.a_params[2];
+										com999.cm.speed=p->inbufMN3.a_params[1];
+										send_com();
+										p->work_com[c_step].t_start = p->sys_timer;
+									}
+									
+									break;
+							case 80:if (p->work_com[c_step].s[i].status==0) 
+									{
+										p->work_com[c_step].s[i].status=1; 
+										if(p->verbose) printf("		R999 REQUEST \n");
+										pc_so_uf (1,0,1,0); //1 raz 1 slovo
+										pc_wml(0x8000,0x3a0201f8);		
+										pc_wm (0x2004,0x00); //KCP 
+										pc_wm (0x2001,0x0888); //ô£¡ò ???-?ÿöR¢« (<®öR? c<R÷R,
+										p->work_com[c_step].t_start = p->sys_timer;
+									}
+									if ((p->work_com[c_step].s[i].status==1)&&(p->sys_timer - p->work_com[c_step].t_start > 100))
+									{
+										read_w=pc_rml(0x41f0);
+										if(p->verbose>1) printf("		R999 READ=%x %x\n",0x41f0,read_w);
+										p->work_com[c_step].s[i].status=2;
+									}  
+									//if(p->verbose) printf("		%d %d\n",p->work_com[c_step].s[i].status,p->sys_timer - p->work_com[c_step].t_start);
 									break;
 							default: 
 									printf("Bad minicom for 1 chan : %d",p->work_com[c_step].s[i].n_com);					
@@ -337,7 +363,8 @@ void send_com()
 	int col=0,i1;
 	for(i1=0;i1<31;i1++) if ((com999.command>>i1)&1==1) col++; 
 	if (col%2==0) com999.cm.odd=1; else com999.cm.odd=0;
-	if(p->verbose) printf("		%x col=%d odd=%d\n",com999.command,col,com999.cm.odd);
+	//if(p->verbose) printf(" SEND		%x col=%d odd=%d\n",com999.command,col,com999.cm.odd);
+	if(p->verbose) printf(" SEND		%x \n",com999.command);
 	pc_so_uf (1,0,1,0); //1 raz 1 slovo
 	pc_wml(0x8000,com999.command);		
 	pc_wm (0x2004,0x00); //KCP 

@@ -126,13 +126,13 @@ main(int argc, char *argv[])
 			{
 				c_step=p->cur_step;
 				for (i=0;i<p->work_com[c_step].num_mini_com;i++) //prosmotrim vse minicomandi na wage 
-					if((p->work_com[c_step].s[i].n_chan==N_CHAN)&&(p->work_com[c_step].s[i].status==0)) //na tekuwem wage (i - minikomanda) est' komanda dl9 nas
+					if((p->work_com[c_step].s[i].n_chan==N_CHAN)&&(p->work_com[c_step].s[i].status!=2)) //na tekuwem wage (i - minikomanda) est' komanda dl9 nas
 					{
-						if(p->work_com[c_step].s[i].n_com!=30) printf("\nSTEP=%d    minicom for RELE : %d      status=%d time %d \n", p->cur_step,  p->work_com[c_step].s[i].n_com, p->work_com[c_step].s[i].status, p->sys_timer);
+						if((p->verbose>1)&&(p->work_com[c_step].s[i].status==0)) printf("\nSTEP=%d    minicom for RELE : %d      status=%d time %d \n", p->cur_step,  p->work_com[c_step].s[i].n_com, p->work_com[c_step].s[i].status, p->sys_timer);
 
 						switch(p->work_com[c_step].s[i].n_com)
 						{
-							case 1: p->work_com[c_step].s[i].status=1;
+							/*case 1: p->work_com[c_step].s[i].status=1;
 									rele|=(1<<p->inbufMN3.a_params[0]);
 									*(unsigned int*)(addr1 +0x2C00)=rele;
                                     if(p->verbose>1) printf("WRITE OUT DATA 0x2C00 %x\n",rele);
@@ -146,14 +146,118 @@ main(int argc, char *argv[])
 									if(p->verbose>1) printf("READ DATA %x\n",*(unsigned int*)(addr1 + 0x4C00));
 									p->work_com[c_step].s[i].status=2;
 									break;
-							case 4: p->work_com[c_step].s[i].status=1;
-									if (p->inbufMN3.a_params[0]) rele|=4;
-									else rele &= ~4;
-									*(unsigned int*)(addr1 +0x2C00)=rele;
-                                    if(p->verbose>1) printf("WRITE OUT DATA 0x2C00 %x\n",rele);
-									if(p->verbose>1) printf("READ DATA %x\n",*(unsigned int*)(addr1 + 0x4C00));
-									p->work_com[c_step].s[i].status=2;
+									*/
+							case 10: //off 1 rele
+									if (p->work_com[c_step].s[i].status==0) 
+									{
+										p->work_com[c_step].s[i].status=1; 
+										rele &= ~1; 	*(unsigned int*)(addr1 +0x2C00)=rele;
+										if(p->verbose>1) printf("WRITE OUT DATA 0x2C00 %x\n",rele);
+									}
+									if (p->work_com[c_step].s[i].status==1)
+									{
+										if ((*(unsigned int*)(addr1 + 0x4C00)&0x08)==0) p->work_com[c_step].s[i].status=2;
+										if(p->verbose>1) printf("READ DATA %x %x\n",*(unsigned int*)(addr1 + 0x4C00),*(unsigned int*)(addr1 + 0x4C00)&0x01);
+									}
 									break;
+							case 11: //on 1 rele
+									if (p->work_com[c_step].s[i].status==0) 
+									{
+										p->work_com[c_step].s[i].status=1; 
+										rele|=1; *(unsigned int*)(addr1 +0x2C00)=rele;
+										if(p->verbose>1) printf("WRITE OUT DATA 0x2C00 %x\n",rele);
+									}
+									if (p->work_com[c_step].s[i].status==1)
+									{
+										if (*(unsigned int*)(addr1 + 0x4C00)&0x08) p->work_com[c_step].s[i].status=2;
+										if(p->verbose>1) printf("READ DATA %x \n",*(unsigned int*)(addr1 + 0x4C00));
+									}
+									break;
+							case 20: //off 2 rele
+									if (p->work_com[c_step].s[i].status==0) 
+									{
+										p->work_com[c_step].s[i].status=1; 
+										rele &= ~2; 	*(unsigned int*)(addr1 +0x2C00)=rele;
+										if(p->verbose>1) printf("WRITE OUT DATA 0x2C00 %x\n",rele);
+									}
+									if (p->work_com[c_step].s[i].status==1)
+									{
+										if ((*(unsigned int*)(addr1 + 0x4C00)&0x02)==0) p->work_com[c_step].s[i].status=2;
+										if(p->verbose>1) printf("READ DATA %x %x\n",*(unsigned int*)(addr1 + 0x4C00),*(unsigned int*)(addr1 + 0x4C00)&0x01);
+									}
+									break;
+							case 21: //on 2 rele
+									if (p->work_com[c_step].s[i].status==0) 
+									{
+										p->work_com[c_step].s[i].status=1; 
+										rele|=2; *(unsigned int*)(addr1 +0x2C00)=rele;
+										if(p->verbose>1) printf("WRITE OUT DATA 0x2C00 %x\n",rele);
+									}
+									if (p->work_com[c_step].s[i].status==1)
+									{
+										if (*(unsigned int*)(addr1 + 0x4C00)&0x02) p->work_com[c_step].s[i].status=2;
+										if(p->verbose>1) printf("READ DATA %x \n",*(unsigned int*)(addr1 + 0x4C00));
+									}
+									break;
+							
+							case 30: //off 3 rele
+									if (p->work_com[c_step].s[i].status==0) 
+									{
+										p->work_com[c_step].s[i].status=1; 
+										rele &= ~4; 	*(unsigned int*)(addr1 +0x2C00)=rele;
+										if(p->verbose>1) printf("WRITE OUT DATA 0x2C00 %x\n",rele);
+									}
+									if (p->work_com[c_step].s[i].status==1)
+									{
+										if ((p->inbufMN3.a_params[0]==0)&&((*(unsigned int*)(addr1 + 0x4C00)&0x04)==0)) p->work_com[c_step].s[i].status=2;
+										if(p->verbose>1) printf("READ DATA %x\n",*(unsigned int*)(addr1 + 0x4C00));
+									}
+									break;
+							case 31: //on 3 rele
+									if (p->work_com[c_step].s[i].status==0) 
+									{
+										p->work_com[c_step].s[i].status=1; 
+										rele|=4; *(unsigned int*)(addr1 +0x2C00)=rele;
+										if(p->verbose>1) printf("WRITE OUT DATA 0x2C00 %x\n",rele);
+										//p->work_com[c_step].t_start = p->sys_timer;
+										//if(p->verbose>1) printf("READ DATA %x\n",*(unsigned int*)(addr1 + 0x4C00));
+									}
+									//if ((p->work_com[c_step].s[i].status==1)&&(p->sys_timer - p->work_com[c_step].t_start > 20))
+									if (p->work_com[c_step].s[i].status==1)
+									{
+										if (*(unsigned int*)(addr1 + 0x4C00)&0x04) p->work_com[c_step].s[i].status=2;
+										//if ((p->inbufMN3.a_params[0]==0)&&((*(unsigned int*)(addr1 + 0x4C00)&0x04)==0)) p->work_com[c_step].s[i].status=2;
+										if(p->verbose>1) printf("READ DATA %x\n",*(unsigned int*)(addr1 + 0x4C00));
+									}
+									break;
+							case 60: //off 6 rele
+									if (p->work_com[c_step].s[i].status==0) 
+									{
+										p->work_com[c_step].s[i].status=1; 
+										rele &= ~0x20; 	*(unsigned int*)(addr1 +0x2C00)=rele;
+										if(p->verbose>1) printf("WRITE OUT DATA 0x2C00 %x\n",rele);
+									}
+									if (p->work_com[c_step].s[i].status==1)
+									{
+										//if ((*(unsigned int*)(addr1 + 0x4C00)&0x20)==0) 
+										p->work_com[c_step].s[i].status=2;
+										if(p->verbose>1) printf("READ DATA %x %x\n",*(unsigned int*)(addr1 + 0x4C00),*(unsigned int*)(addr1 + 0x4C00)&0x01);
+									}
+									break;
+							case 61: //on 6 rele
+									if (p->work_com[c_step].s[i].status==0) 
+									{
+										p->work_com[c_step].s[i].status=1; 
+										rele|=0x20; *(unsigned int*)(addr1 +0x2C00)=rele;
+										if(p->verbose>1) printf("WRITE OUT DATA 0x2C00 %x\n",rele);
+									}
+									if (p->work_com[c_step].s[i].status==1)
+									{
+										//if (*(unsigned int*)(addr1 + 0x4C00)&0x20) 
+										p->work_com[c_step].s[i].status=2;
+										if(p->verbose>1) printf("READ DATA %x \n",*(unsigned int*)(addr1 + 0x4C00));
+									}
+									break;		
 							case 25: p->work_com[c_step].s[i].status=1;
 									if (p->inbufMN3.a_params[0]) rele|=2;
 									else rele &= ~2;
@@ -167,10 +271,20 @@ main(int argc, char *argv[])
 									printf("READ DATA %x\n",*(unsigned int*)(addr1 + 0x4C00));
 									p->work_com[c_step].s[i].status=2;
 									break;
-							case 30: // pause
+							case 90: // pause
 									//if(p->verbose>1) printf(" %d\n",p->work_com[c_step].t_stop-p->sys_timer);
 									if (p->work_com[c_step].t_stop-p->sys_timer<20) p->work_com[c_step].s[i].status=2;
 									break;
+							case 104: //Ogidanie Ispravnosti R999
+									//p->work_com[c_step].s[i].status=1;
+									//if(p->verbose>1) 
+									if (p->inbufMN3.a_params[0]&&(*(unsigned int*)(addr1 + 0x4C00)&0x04)) p->work_com[c_step].s[i].status=2;
+									if ((p->inbufMN3.a_params[0]==0)&&((*(unsigned int*)(addr1 + 0x4C00)&0x04)==0)) p->work_com[c_step].s[i].status=2;
+									
+									//if ((*(unsigned int*)(addr1 + 0x4C00)&0x04)&&(p->inbufMN3.a_params[0])) p->work_com[c_step].s[i].status=2;
+									printf("READ DATA %x\n",*(unsigned int*)(addr1 + 0x4C00));
+									//p->work_com[c_step].s[i].status=2;
+									break;		
 							default: 
 									printf("Bad minicom for 1 chan : %d",p->work_com[c_step].s[i].n_com);					
 									p->work_com[c_step].s[i].status=3;

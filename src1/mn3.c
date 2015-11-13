@@ -55,7 +55,7 @@ main()
 //	create_shmem();
 	delay(1500);
 	open_shmem();
-	delay(300);
+	delay(3000);
 	p->verbose=3;
 	
   	printf("Start MN3 %d\n\n",sizeof(packusoi));	
@@ -120,37 +120,74 @@ main()
                         p->work_com[n_s].t_start=p->sys_timer;                        
                         p->work_com[n_s].t_stop =p->sys_timer+100;                        
  						break;
-				case 4 : case 25 :
-						n_s=1;  //nomer waga
-						n_mc=0; //s4et4ik mini komamdi
+				case 4 : 
+						n_s=1;  n_mc=0; //nomer waga //s4et4ik mini komamdi
 						p->work_com[n_s].s[n_mc].n_chan=3;
-						p->work_com[n_s].s[n_mc].n_com=p->inbufMN3.num_com;
-						p->work_com[n_s].s[n_mc].status=0;		
+						if (p->inbufMN3.a_params[0]) p->work_com[n_s].s[n_mc].n_com=31; //rele 3 on/off
+						else p->work_com[n_s].s[n_mc].n_com=30;
 						n_mc++; //kol-vo mini komand + 1
 						p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s  
-						p->work_com[n_s].t_start=p->sys_timer;                        
 						p->work_com[n_s].t_stop =p->sys_timer+100; 
-						//---------------------------------------------
-						n_s=2;  //nomer waga
-						n_mc=0; //s4et4ik mini komamdi
-						p->work_com[n_s].s[n_mc].n_chan=3;
-						p->work_com[n_s].s[n_mc].n_com=30;  //waiting
-						p->work_com[n_s].s[n_mc].status=0;						
-						n_mc++; //kol-vo mini komand + 1						
-						p->work_com[n_s].t_start=p->sys_timer;                        
-						p->work_com[n_s].t_stop =p->sys_timer+70;        //2 sec                
-						p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s  
 						//-----------------------------------------------------------
-						n_s=3;  //nomer waga
-						n_mc=0; //s4et4ik mini komamdi
+						n_s=2;  n_mc=0; //nomer waga //s4et4ik mini komamdi
 						p->work_com[n_s].s[n_mc].n_chan=3;
-						p->work_com[n_s].s[n_mc].n_com=29;  //waiting
-						p->work_com[n_s].s[n_mc].status=0;						
-						n_mc++; //kol-vo mini komand + 1						
-						p->work_com[n_s].t_start=p->sys_timer;                        
-						p->work_com[n_s].t_stop =p->sys_timer+160;        //2 sec                
+						if (p->inbufMN3.a_params[0]) p->work_com[n_s].s[n_mc].n_com=10; //rele 1 on/off
+						else p->work_com[n_s].s[n_mc].n_com=11;
+						n_mc++; //kol-vo mini komand + 1
 						p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s  
+						p->work_com[n_s].t_stop =p->sys_timer+100;
+						//-----------------------------------------------------------
+						n_s=3;  n_mc=0; //nomer waga //s4et4ik mini komamdi
+						p->work_com[n_s].s[n_mc].n_chan=3;
+						if (p->inbufMN3.a_params[0]) p->work_com[n_s].s[n_mc].n_com=61; //rele 5 on/off
+						else p->work_com[n_s].s[n_mc].n_com=60;
+						n_mc++; //kol-vo mini komand + 1
+						p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s  
+						p->work_com[n_s].t_stop =p->sys_timer+100;
+						//-----------------------------------------------------------
+						if (p->inbufMN3.a_params[0]) // R999 onn
+						{
+							n_s=4;  n_mc=0; //s4et4ik mini komamdi
+							p->work_com[n_s].s[n_mc].n_chan=4;
+							p->work_com[n_s].s[n_mc].n_com=4;  //R999 BASE SETUP 
+							n_mc++; //kol-vo mini komand + 1						
+							p->work_com[n_s].t_stop =p->sys_timer+300;        //2 sec                
+							p->work_com[n_s].num_mini_com=n_mc;   
+								//-----------------------------------------------------------
+							/*n_s=4;  n_mc=0; //s4et4ik mini komamdi
+							p->work_com[n_s].s[n_mc].n_chan=3;
+							p->work_com[n_s].s[n_mc].n_com=30;  //pause
+							n_mc++; //kol-vo mini komand + 1						
+							p->work_com[n_s].t_stop =p->sys_timer+100;        //2 sec                
+							p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s 
+							*/
+							//-----------------------------------------------------------						
+							n_s=5;  n_mc=0; //s4et4ik mini komamdi
+							p->work_com[n_s].s[n_mc].n_chan=4;
+							p->work_com[n_s].s[n_mc].n_com=80;  //reqest
+							n_mc++; //kol-vo mini komand + 1						
+							p->work_com[n_s].t_stop =p->sys_timer+300;        //2 sec                
+							p->work_com[n_s].num_mini_com=n_mc;
+							//-----------------------------------------------------------
+							
+						}
 						//----------------------------------------------------------
+						
+						/*n_s=6;  n_mc=0; //s4et4ik mini komamdi
+						p->work_com[n_s].s[n_mc].n_chan=3;
+						p->work_com[n_s].s[n_mc].n_com=30;  //pause
+						n_mc++; //kol-vo mini komand + 1						
+						p->work_com[n_s].t_stop =p->sys_timer+200;        //2 sec                
+						p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s 
+						//-----------------------------------------------------------	
+						n_s=7;  n_mc=0; //s4et4ik mini komamdi
+						p->work_com[n_s].s[n_mc].n_chan=4;
+						p->work_com[n_s].s[n_mc].n_com=1;  //READ r999
+						n_mc++; //kol-vo mini komand + 1						
+						p->work_com[n_s].t_stop =p->sys_timer+300;        //2 sec                
+						p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s 
+						//-----------------------------------------------------------	
+						*/
 						p->kol_step=n_s; //obwee kol-vo wagov na dannom wage
 						break;
 					
@@ -207,13 +244,17 @@ main()
 								n_mc=0; //s4et4ik mini komamdi
 								p->work_com[n_s].s[n_mc].n_chan=4;
 								p->work_com[n_s].s[n_mc].n_com=p->inbufMN3.num_com;
-								p->work_com[n_s].s[n_mc].status=0;		
 								n_mc++; //kol-vo mini komand + 1
-								//---------------------------------------------
 								p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s  
-								p->kol_step=n_s; //obwee kol-vo wagov na dannom wage
-								p->work_com[n_s].t_start=p->sys_timer;                        
-								p->work_com[n_s].t_stop =p->sys_timer+100; 
+								p->work_com[n_s].t_stop =p->sys_timer+200;
+								//---------------------------------------------
+								n_s=2;  n_mc=0; //s4et4ik mini komamdi
+								p->work_com[n_s].s[n_mc].n_chan=4;
+								p->work_com[n_s].s[n_mc].n_com=80;  //reqest
+								n_mc++; //kol-vo mini komand + 1						
+								p->work_com[n_s].t_stop =p->sys_timer+400;        //2 sec                
+								p->work_com[n_s].num_mini_com=n_mc;
+								p->kol_step=n_s; //obwee kol-vo wagov na dannom wage								
 							}
 							else 
 							{
@@ -222,7 +263,22 @@ main()
 								p->toMN3.cr_com++;
 							}
 							break;							
-					
+					case 25 :
+						n_s=1;  //nomer waga
+						n_mc=0; //s4et4ik mini komamdi
+						p->work_com[n_s].s[n_mc].n_chan=3;
+						if (p->inbufMN3.a_params[0]) p->work_com[n_s].s[n_mc].n_com=21;
+						else p->work_com[n_s].s[n_mc].n_com=20;
+						p->work_com[n_s].s[n_mc].status=0;		
+						n_mc++; //kol-vo mini komand + 1
+						p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s  
+						p->work_com[n_s].t_start=p->sys_timer;                        
+						p->work_com[n_s].t_stop =p->sys_timer+100; 
+						//---------------------------------------------
+						  
+						//----------------------------------------------------------
+						p->kol_step=n_s; //obwee kol-vo wagov na dannom wage
+						break;
 					case 30 : case 32 : case 33: case 42 : case 43:
 						if ((p->inbufMN3.a_params[0]>=0)&&(p->inbufMN3.a_params[0]<26))
 						{
