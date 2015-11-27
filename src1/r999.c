@@ -203,6 +203,7 @@ if (p->verbose) printf("START MO3A<->R999\n\n");
 										com999.cm.speed=p->inbufMN3.a_params[1];
 										send_com();
 										p->work_com[c_step].t_start = p->sys_timer;
+										p->work_com[c_step].s[i].status=2;
 									}
 									
 									break;
@@ -217,6 +218,7 @@ if (p->verbose) printf("START MO3A<->R999\n\n");
 										com999.cm.speed=p->inbufMN3.a_params[1];
 										send_com();
 										p->work_com[c_step].t_start = p->sys_timer;
+										p->work_com[c_step].s[i].status=2;
 									}
 									
 									break;
@@ -234,6 +236,7 @@ if (p->verbose) printf("START MO3A<->R999\n\n");
 									{
 										read_w=pc_rml(0x41f0);
 										if(p->verbose>1) printf("		R999 READ=%x %x\n",0x41f0,read_w);
+										p->toMN3.sost_r999=read_w;
 										p->work_com[c_step].s[i].status=2;
 									}  
 									//if(p->verbose) printf("		%d %d\n",p->work_com[c_step].s[i].status,p->sys_timer - p->work_com[c_step].t_start);

@@ -29,19 +29,7 @@
 #define N_CHAN 2 //CPP SPC
 
 #ifdef __USAGE
-		  %C - эта программа выполняет функции клиента при обмене по протоколу 
-		  TCP/IP.
-		  программа требует параметры: 
-		  адрес сервера(например CPP1)	
-		  порт сервера(например 4000). 
-		  при запуске программа каждые 100 мс устанавливает связь с сервером,
-		  посылает ему команды (сообщения) и получает ответные данные, которые
-		  помещает в массив разделяемой (общей) памяти.
-		  %C [опции]
-
-		  опции:
-		  1-й параметр 	имя хоста сервера
-		  2-й параметр 	номер порта сервера
+		  HELPа
 
 	#endif
 
@@ -64,7 +52,7 @@ int T_ALRM =0; //prizn srabativani9 taimera
 #ifdef CVM10
 	char Host[12]="CPP0_1",port[4]="4004";
 #else
-	char Host[12]="CPP2",port[4]="4004";
+	char Host[12]="CPP2",port[4]="4003";
 #endif
  
 int Seans=0; 
@@ -348,10 +336,8 @@ short tcp_send_read(int col)
 	short rez;
 	int i,i1,n,j;
 	short status,sum;
-	
-	
 
-//message
+	//message
 	/*mes_cpp.marker1=0xFFFF;
 	mes_cpp.marker2=0xFFFF;
 	mes_cpp.KSS=0;
@@ -359,9 +345,7 @@ short tcp_send_read(int col)
 	mes_cpp.TS=0;
 	mes_cpp.PS=1;
 	*/
-	
-	
-	
+
 	//            starting connection
 	for(i1=0;i1<3;i1++)
 	{
@@ -370,7 +354,7 @@ short tcp_send_read(int col)
 		rez=timer_settime( tm10, 0, &timer_sig,NULL); //start timer
 		if (rez==-1)    printf("%s. seanse %d. start timer error\n",Host,Seans);     
 
-		if (p->verbose>1) printf("Create Socket : ");
+		if (p->verbose>1) printf("Create Socket : %s", port);
 		sock1 = CrSocket(Host,port);
 		
 		rez=1;

@@ -12,8 +12,8 @@
   #include "../include/func_IP.h"
   #include "../include/shared_mem.h"
   
-  #define SRC_PORT 4003
-  #define DST_PORT 4000
+ //#define SRC_PORT 4003
+ // #define DST_PORT 4000
 
 
   #define MS 1000000
@@ -28,11 +28,18 @@ main()
 		char bufi[1024];
 		char bufo[1024];
 		char out_buf[1024];
+
 #ifdef CVM10
+		//#define SRC_PORT 4000
+		//#define DST_PORT 4003
+		#define SRC_PORT 4003
+		#define DST_PORT 4000
 		char name[30] ="SPIAK_N8_Eth2";// "192.168.3.1";
 	
 #else
-		char name[30] ="SPIAK_N9_Eth4";// "192.168.3.1";
+		#define SRC_PORT 4005
+		#define DST_PORT 4001
+		char name[30] ="SPIAK_N9_Eth4";// "192.168.1.2";
 
 #endif
 
@@ -50,7 +57,7 @@ main()
 
 
 	i = Udp_Client_Ini(&Uc42,name,DST_PORT,SRC_PORT);
-	printf(" Udp_Init=%d	\n", i);
+	printf(" Udp_Init=%d	dst=%d src=%d\n", i,DST_PORT,SRC_PORT);
 
 //	create_shmem();
 	delay(1500);
@@ -89,7 +96,7 @@ main()
 					//printf("\n=====> ");for(i1=0;i1<i;i1++) printf(" %d ", pack_buf[i1]);printf("\n");
 				}
 			}
-            
+           //--------------------------------------------------------------------------- 
 			if (p->fromMN3.cr_com!=p->inbufMN3.cr_com) // new command from MN3
 //			if ((p->fromMN3.cr_com==0)||(p->fromMN3.cr_com!=p->inbufMN3.cr_com)) // new command from MN3
 			{
@@ -101,26 +108,30 @@ main()
                // p->toMN3.krk = 0;
                 p->toMN3.link = 0;
 					
-
 				printf("\nNew command : %d , param: %d %d %d    time=%d\n",p->inbufMN3.num_com,p->inbufMN3.a_params[0],p->inbufMN3.a_params[1],p->inbufMN3.a_params[2],p->sys_timer);
 				switch (p->inbufMN3.num_com)
 				{
-				case 1 : case 60 : case 70 :    
+				case 1 : 
+				//#ifdef CVM10
+				case 60 : 
+				//#else
+				case 70 :    
+				//#endif  
 						n_s=1;  //nomer waga
 						n_mc=0; //s4et4ik mini komamdi
 						p->work_com[n_s].s[n_mc].n_chan=2;
-						p->work_com[n_s].s[n_mc].n_com=1;
+						p->work_com[n_s].s[n_mc].n_com=1; //SVCH work
 						p->work_com[n_s].s[n_mc].status=0;		
                         n_mc++; //kol-vo mini komand + 1
 					//---------------------------------------------
-					
 					//---------------------------------------------
 						p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s  
 						p->kol_step=n_s; //obwee kol-vo wagov na dannom wage
                         p->work_com[n_s].t_start=p->sys_timer;                        
                         p->work_com[n_s].t_stop =p->sys_timer+100;                        
  						break;
-				case 4 : 
+				case 4 :
+						#ifdef CVM10				
 						n_s=1;  n_mc=0; //nomer waga //s4et4ik mini komamdi
 						p->work_com[n_s].s[n_mc].n_chan=3;
 						if (p->inbufMN3.a_params[0]) p->work_com[n_s].s[n_mc].n_com=31; //rele 3 on/off
@@ -131,8 +142,8 @@ main()
 						//-----------------------------------------------------------
 						n_s=2;  n_mc=0; //nomer waga //s4et4ik mini komamdi
 						p->work_com[n_s].s[n_mc].n_chan=3;
-						if (p->inbufMN3.a_params[0]) p->work_com[n_s].s[n_mc].n_com=10; //rele 1 on/off
-						else p->work_com[n_s].s[n_mc].n_com=11;
+						if (p->inbufMN3.a_params[1]) p->work_com[n_s].s[n_mc].n_com=11; //rele 1 on/off
+						else p->work_com[n_s].s[n_mc].n_com=10;
 						n_mc++; //kol-vo mini komand + 1
 						p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s  
 						p->work_com[n_s].t_stop =p->sys_timer+100;
@@ -188,23 +199,38 @@ main()
 						p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s 
 						//-----------------------------------------------------------	
 						*/
+						#else
+						n_s=1;  //nomer waga
+						n_mc=0; //s4et4ik mini komamdi
+						p->work_com[n_s].s[n_mc].n_chan=2;
+						p->work_com[n_s].s[n_mc].n_com=101;//all ok status=2
+						p->work_com[n_s].s[n_mc].status=0;		
+						n_mc++; //kol-vo mini komand + 1
+						//---------------------------------------------
+						p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s  
+						p->work_com[n_s].t_start=p->sys_timer;                        
+						p->work_com[n_s].t_stop =p->sys_timer+100;
+						//p->kol_step=n_s; //obwee kol-vo wagov na dannom wage  
+						
+						#endif
 						p->kol_step=n_s; //obwee kol-vo wagov na dannom wage
 						break;
-					
-					case 5 : 
+					case 5 :
+					#ifdef CVM11
 						if ((p->inbufMN3.a_params[0]>0)&&(p->inbufMN3.a_params[0]<7))
 						{
 							n_s=1;  //nomer waga
 							n_mc=0; //s4et4ik mini komamdi
 							p->work_com[n_s].s[n_mc].n_chan=2;
-							p->work_com[n_s].s[n_mc].n_com=5;
+							p->work_com[n_s].s[n_mc].n_com=5;//SVCH PRD-PRM CHAN
 							p->work_com[n_s].s[n_mc].status=0;		
 							n_mc++; //kol-vo mini komand + 1
 							//---------------------------------------------
 							p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s  
-							p->kol_step=n_s; //obwee kol-vo wagov na dannom wage
+							
 							p->work_com[n_s].t_start=p->sys_timer;                        
-							p->work_com[n_s].t_stop =p->sys_timer+100;   
+							p->work_com[n_s].t_stop =p->sys_timer+100;
+							p->kol_step=n_s; //obwee kol-vo wagov na dannom wage   
 						}
 						else 
 						{
@@ -212,7 +238,20 @@ main()
 							p->toMN3.kzv=1;
 							p->toMN3.cr_com++;
 						}
- 						break;
+					#else
+						n_s=1;  //nomer waga
+						n_mc=0; //s4et4ik mini komamdi
+						p->work_com[n_s].s[n_mc].n_chan=2;
+						p->work_com[n_s].s[n_mc].n_com=101;//all ok status=2
+						p->work_com[n_s].s[n_mc].status=0;		
+						n_mc++; //kol-vo mini komand + 1
+						//---------------------------------------------
+						p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s  
+						p->work_com[n_s].t_start=p->sys_timer;                        
+						p->work_com[n_s].t_stop =p->sys_timer+100;
+						p->kol_step=n_s; //obwee kol-vo wagov na dannom wage   
+					#endif
+						break;
 					case 8 : case 12 :case 14 :case 15 : 
 						if ((p->inbufMN3.a_params[0]>=0)&&(p->inbufMN3.a_params[0]<2))
 						{
@@ -279,7 +318,46 @@ main()
 						//----------------------------------------------------------
 						p->kol_step=n_s; //obwee kol-vo wagov na dannom wage
 						break;
-					case 30 : case 32 : case 33: case 42 : case 43:
+					
+					case 30 :
+					#ifdef CVM11
+						//printf("1!!\n");
+						if ((p->inbufMN3.a_params[0]>=0)&&(p->inbufMN3.a_params[0]<26))
+						{
+							//printf("2!!\n");
+							n_s=1;  //nomer waga
+							n_mc=0; //s4et4ik mini komamdi
+							p->work_com[n_s].s[n_mc].n_chan=2;
+							p->work_com[n_s].s[n_mc].n_com=p->inbufMN3.num_com; //SVCH ATT
+							p->work_com[n_s].s[n_mc].status=0;		
+							n_mc++; //kol-vo mini komand + 1
+							//---------------------------------------------
+							p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s  
+							p->kol_step=n_s; //obwee kol-vo wagov na dannom wage
+							p->work_com[n_s].t_start=p->sys_timer;                        
+							p->work_com[n_s].t_stop =p->sys_timer+100;   
+						}
+						else 
+						{
+							printf("Bad param0 : %d\n",p->inbufMN3.a_params[0]);
+							p->toMN3.kzv=1;
+							p->toMN3.cr_com++;
+						}
+ 						break;
+					#else 						
+						n_s=1;  //nomer waga
+						n_mc=0; //s4et4ik mini komamdi
+						p->work_com[n_s].s[n_mc].n_chan=2;
+						p->work_com[n_s].s[n_mc].n_com=101;//all ok status=2
+						p->work_com[n_s].s[n_mc].status=0;		
+						n_mc++; //kol-vo mini komand + 1
+						//---------------------------------------------
+						p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s  
+						p->work_com[n_s].t_start=p->sys_timer;                        
+						p->work_com[n_s].t_stop =p->sys_timer+100;
+						p->kol_step=n_s; //obwee kol-vo wagov na dannom wage  
+					#endif  
+					case 32 : case 33: case 42 : case 43:
 						if ((p->inbufMN3.a_params[0]>=0)&&(p->inbufMN3.a_params[0]<26))
 						{
 							n_s=1;  //nomer waga
@@ -301,11 +379,15 @@ main()
 							p->toMN3.cr_com++;
 						}
  						break;
-					case 61 : case 71 :    
+				//#ifdef CVM10
+				case 61 : 
+				//#else
+				case 71 :    
+				//#endif     
 						n_s=1;  //nomer waga
 						n_mc=0; //s4et4ik mini komamdi
 						p->work_com[n_s].s[n_mc].n_chan=2;
-						p->work_com[n_s].s[n_mc].n_com=61;
+						p->work_com[n_s].s[n_mc].n_com=61; //SVCH status
 						p->work_com[n_s].s[n_mc].status=0;		
                         n_mc++; //kol-vo mini komand + 1
 					//---------------------------------------------
@@ -316,22 +398,23 @@ main()
                         p->work_com[n_s].t_start=p->sys_timer;                        
                         p->work_com[n_s].t_stop =p->sys_timer+100;                        
  						break;
-				case 65 :    
+				
+				//#ifdef CVM10
+				case 65 : case 75 :
 						n_s=1;  //nomer waga
 						n_mc=0; //s4et4ik mini komamdi
 						p->work_com[n_s].s[n_mc].n_chan=2;
-						p->work_com[n_s].s[n_mc].n_com=65;
+						p->work_com[n_s].s[n_mc].n_com=65;   //FK
 						p->work_com[n_s].s[n_mc].status=0;		
                         n_mc++; //kol-vo mini komand + 1
-					//---------------------------------------------
 					
-					//---------------------------------------------
 						p->work_com[n_s].num_mini_com=n_mc; //zapomnim kol-vo mini komand na wage n_s  
 						p->kol_step=n_s; //obwee kol-vo wagov na dannom wage
                         p->work_com[n_s].t_start=p->sys_timer;                        
                         p->work_com[n_s].t_stop =p->sys_timer+100;                        
  						break;
-					case 78 :    
+				
+				case 78 :    
 						n_s=1;  //nomer waga
 						n_mc=0; //s4et4ik mini komamdi
 						p->work_com[n_s].s[n_mc].n_chan=1;
@@ -358,7 +441,20 @@ main()
 
 						//printf("номер канала на нулевом шаге = %d\n",p->work_com[0].s[0].n_chan);
  						break;
-					case 100 : //rele_off
+				case 80 :    
+							n_s=1;  n_mc=0; //s4et4ik mini komamdi
+							p->work_com[n_s].s[n_mc].n_chan=4;
+							p->work_com[n_s].s[n_mc].n_com=80;  //reqest
+							n_mc++; //kol-vo mini komand + 1						
+							p->work_com[n_s].t_stop =p->sys_timer+200;        //2 sec                
+							p->work_com[n_s].num_mini_com=n_mc; 
+					
+					//---------------------------------------------
+						p->kol_step=n_s; //obwee kol-vo wagov na dannom wage 
+
+						//printf("номер канала на нулевом шаге = %d\n",p->work_com[0].s[0].n_chan);
+ 						break;
+				case 100 : //rele_off
 						if ((p->inbufMN3.a_params[0]>=0)&&(p->inbufMN3.a_params[0]<9))
 						{
 							n_s=1;  //nomer waga
@@ -504,7 +600,7 @@ main()
 			}
 			if ((p->cur_step > p->kol_step) && (p->kol_step!=0)) //vse wagi proideni, komanda vopolnena
 			{
-				printf("Command %d complete , time=%d\n",p->fromMN3.num_com,p->sys_timer);
+				printf("Command %d complete , time=%d %x\n",p->fromMN3.num_com,p->sys_timer,p->toMN3.sost_r999);
 				// NADO GOTOVIT' DANNIE DL9 MN3 ------------------------
 				//------------------------------------------------------
 				//------------------------------------------------------	

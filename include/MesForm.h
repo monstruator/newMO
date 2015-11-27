@@ -93,8 +93,8 @@ struct form12
 	char SS3; // 0 - FM1, 1 - FM2
 	char SS5; // nomer RT PRM 7-12
 	char SS4; // nomer RT PRD 7-12
-	char SS7; // oslablenie PRD 0-25
-	char SS6; // nomer FK 1-10
+	char SS7; // nomer FK 1-10
+	char SS6; // oslablenie PRD 0-25
 	char SS9; // PZ IB v PRD : 0 - net zarguzki, 1 - IB zagruzen, 2 - IS peredano 
 	char SS8; // priznak priema IS (TKI) 0 - net priema, 1 - priem IS
 	short SS10; // dlina preambuli : 1 - 255

@@ -47,7 +47,8 @@ typedef   struct  {
       short link; 
 
       unsigned int sost_kasrt[9];
-      unsigned int sost_spiak[2];
+      unsigned int sost_spiak;
+	  unsigned int sost_r999;
 
       union {
          struct {
