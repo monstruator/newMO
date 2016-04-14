@@ -2,9 +2,9 @@ struct zag_CPP
 {
  unsigned short marker1;//=0xff;
  unsigned short marker2;//=0xff;
- short reserv : 7;
- short KSS: 9; //kol-vo slov
-// short KSS;
+//! short reserv : 7;
+//! short KSS: 9; //kol-vo slov
+ short KSS;
  char TS; // CPP1=2 CPP2=3
  char II;
  short PS;
@@ -41,6 +41,8 @@ struct form11
 	char ustKU11; // 1 - ustanovit' , 0 - ne ustanavlivat'
 	char KU12; // Usilenie PRM 0 - 63
 	char ustKU12; // 1 - ustanovit' , 0 - ne ustanavlivat'
+	//short gen1;
+	//short gen2;
 	short CHK_SUM;
 };
 
@@ -74,6 +76,8 @@ struct form13
 	char ustKU11; // 1 - ustanovit' , 0 - ne ustanavlivat'
 	char KU12; // Usilenie PRM 0 - 63
 	char ustKU12; // 1 - ustanovit' , 0 - ne ustanavlivat'
+	//short gen1;
+	//short gen2;
 	int CHK_SUM;
 };
 
@@ -109,6 +113,8 @@ struct form12
 	short SS19; // srednii pik AFK  : 0 - 360
 	short SS20; // max pik AFK  : 0 - 360
 	short SS21; // oslablenie prm  : 0 - 63
+	//short gen1;
+	//short gen2;
 	short KSS; //kontrol'na9 summa
 };
 
@@ -144,6 +150,8 @@ struct form14
 	short SS19; // srednii pik AFK  : 0 - 360
 	short SS20; // max pik AFK  : 0 - 360
 	short SS21; // oslablenie prm  : 0 - 63
+	//short gen1;
+	//short gen2;
 	short KSS; //kontrol'na9 summa
 };
 
@@ -156,7 +164,7 @@ struct from_cpp12
 		struct 
 		{
 			short nf;
-			unsigned int data_int[9];
+			unsigned int data_int[9]; //9
 			short KS;
 		} i;
 	};

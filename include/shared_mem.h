@@ -2,10 +2,10 @@
  #include "obmen_VS.h"
  #define MAX_SHMEM_COUNT 20
 
-#define  SHMEM_NAME  "MO3Av1.0"   
+#define  SHMEM_NAME  "MO3Av1.1"   
 #define  SHMEM_t  SHMEM_MO3A
 
-#define CVM10
+//#define CVM10
 //#define CVM11
 
 SHMEM_MO3A *p;      

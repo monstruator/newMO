@@ -152,7 +152,7 @@ main(int argc, char *argv[])
 									{
 										p->work_com[c_step].s[i].status=1; 
 										rele &= ~1; 	*(unsigned int*)(addr1 +0x2C00)=rele;
-										if(p->verbose>1) printf("WRITE OUT DATA 0x2C00 %x\n",rele);
+										if(p->verbose>1) printf("WRITE OUT DATA %x\n",rele);
 									}
 									if (p->work_com[c_step].s[i].status==1)
 									{
@@ -165,7 +165,7 @@ main(int argc, char *argv[])
 									{
 										p->work_com[c_step].s[i].status=1; 
 										rele|=1; *(unsigned int*)(addr1 +0x2C00)=rele;
-										if(p->verbose>1) printf("WRITE OUT DATA 0x2C00 %x\n",rele);
+										if(p->verbose>1) printf("WRITE OUT DATA %x\n",rele);
 									}
 									if (p->work_com[c_step].s[i].status==1)
 									{
@@ -178,7 +178,7 @@ main(int argc, char *argv[])
 									{
 										p->work_com[c_step].s[i].status=1; 
 										rele &= ~2; 	*(unsigned int*)(addr1 +0x2C00)=rele;
-										if(p->verbose>1) printf("WRITE OUT DATA 0x2C00 %x\n",rele);
+										if(p->verbose>1) printf("WRITE OUT DATA %x\n",rele);
 									}
 									if (p->work_com[c_step].s[i].status==1)
 									{
@@ -191,7 +191,7 @@ main(int argc, char *argv[])
 									{
 										p->work_com[c_step].s[i].status=1; 
 										rele|=2; *(unsigned int*)(addr1 +0x2C00)=rele;
-										if(p->verbose>1) printf("WRITE OUT DATA 0x2C00 %x\n",rele);
+										if(p->verbose>1) printf("WRITE OUT DATA %x\n",rele);
 									}
 									if (p->work_com[c_step].s[i].status==1)
 									{
@@ -205,7 +205,7 @@ main(int argc, char *argv[])
 									{
 										p->work_com[c_step].s[i].status=1; 
 										rele &= ~4; 	*(unsigned int*)(addr1 +0x2C00)=rele;
-										if(p->verbose>1) printf("WRITE OUT DATA 0x2C00 %x\n",rele);
+										if(p->verbose>1) printf("WRITE OUT DATA %x\n",rele);
 									}
 									if (p->work_com[c_step].s[i].status==1)
 									{
@@ -218,7 +218,7 @@ main(int argc, char *argv[])
 									{
 										p->work_com[c_step].s[i].status=1; 
 										rele|=4; *(unsigned int*)(addr1 +0x2C00)=rele;
-										if(p->verbose>1) printf("WRITE OUT DATA 0x2C00 %x\n",rele);
+										if(p->verbose>1) printf("WRITE OUT DATA  %x\n",rele);
 										//p->work_com[c_step].t_start = p->sys_timer;
 										//if(p->verbose>1) printf("READ DATA %x\n",*(unsigned int*)(addr1 + 0x4C00));
 									}
@@ -228,6 +228,38 @@ main(int argc, char *argv[])
 										if (*(unsigned int*)(addr1 + 0x4C00)&0x04) p->work_com[c_step].s[i].status=2;
 										//if ((p->inbufMN3.a_params[0]==0)&&((*(unsigned int*)(addr1 + 0x4C00)&0x04)==0)) p->work_com[c_step].s[i].status=2;
 										if(p->verbose>1) printf("READ DATA %x\n",*(unsigned int*)(addr1 + 0x4C00));
+									}
+									break;
+							case 40: //off 4 rele
+									if (p->work_com[c_step].s[i].status==0) 
+									{
+										p->work_com[c_step].s[i].status=2; 
+										rele &= ~8; 	*(unsigned int*)(addr1 +0x2C00)=rele;
+										if(p->verbose>1) printf("WRITE OUT DATA %x\n",rele);
+									}
+									break;
+							case 41: //on 4 rele
+									if (p->work_com[c_step].s[i].status==0) 
+									{
+										p->work_com[c_step].s[i].status=2; 
+										rele|=8; *(unsigned int*)(addr1 +0x2C00)=rele;
+										if(p->verbose>1) printf("WRITE OUT DATA  %x\n",rele);
+									}
+									break;
+							case 50: //off 5 rele
+									if (p->work_com[c_step].s[i].status==0) 
+									{
+										p->work_com[c_step].s[i].status=2; 
+										rele &= ~0x10; 	*(unsigned int*)(addr1 +0x2C00)=rele;
+										if(p->verbose>1) printf("WRITE OUT DATA %x\n",rele);
+									}
+									break;
+							case 51: //on 5 rele
+									if (p->work_com[c_step].s[i].status==0) 
+									{
+										p->work_com[c_step].s[i].status=2; 
+										rele|=0x10; *(unsigned int*)(addr1 +0x2C00)=rele;
+										if(p->verbose>1) printf("WRITE OUT DATA  %x\n",rele);
 									}
 									break;
 							case 60: //off 6 rele
@@ -262,7 +294,7 @@ main(int argc, char *argv[])
 									if (p->inbufMN3.a_params[0]) rele|=2;
 									else rele &= ~2;
 									*(unsigned int*)(addr1 +0x2C00)=rele;
-                                    if(p->verbose>1) printf("WRITE OUT DATA 0x2C00 %x\n",rele);
+                                    if(p->verbose>1) printf("WRITE OUT DATA  %x\n",rele);
 									if(p->verbose>1) printf("READ DATA %x\n",*(unsigned int*)(addr1 + 0x4C00));
 									p->work_com[c_step].s[i].status=2;
 									break;
@@ -286,7 +318,7 @@ main(int argc, char *argv[])
 									//p->work_com[c_step].s[i].status=2;
 									break;		
 							default: 
-									printf("Bad minicom for 1 chan : %d",p->work_com[c_step].s[i].n_com);					
+									printf("Bad minicom %d for %d chan : %d",p->work_com[c_step].s[i].n_com, N_CHAN);					
 									p->work_com[c_step].s[i].status=3;
 									
 						}//switch (n_com)

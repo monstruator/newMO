@@ -97,7 +97,7 @@ main(int argc, char *argv[])
 	
 	if (argc<3) 
 	{
-		if (p->cvs==10)	{		Host="CPP0_1";		port="4004"; 	}//4004	
+		if (p->cvs==10)	{		Host="192.168.0.1";		port="4004"; 	}//4004	
 		else			{		Host="CPP2";		port="4003"; 	}//4003			
 		//else			{		Host="CPP0_1";		port="4004"; 	}//4003
 		//printf("\nhost and port number dont entering\n");

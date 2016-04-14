@@ -242,7 +242,7 @@ if (p->verbose) printf("START MO3A<->R999\n\n");
 									//if(p->verbose) printf("		%d %d\n",p->work_com[c_step].s[i].status,p->sys_timer - p->work_com[c_step].t_start);
 									break;
 							default: 
-									printf("Bad minicom for 1 chan : %d",p->work_com[c_step].s[i].n_com);					
+									printf("Bad minicom %d for %d chan : %d",p->work_com[c_step].s[i].n_com,N_CHAN);					
 									p->work_com[c_step].s[i].status=3;
 									
 						}//switch (n_com)
